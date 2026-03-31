@@ -56,23 +56,17 @@ describe('HomeTabs', () => {
     expect(databasesTab).toHaveAttribute('data-state', 'active')
   })
 
-  it('should show rdi instances tab active', async () => {
+  it('should hide rdi tab by default', () => {
     reactRouterDom.useLocation = jest
       .fn()
       .mockReturnValue({ pathname: Pages.rdi })
 
     render(<HomeTabs />)
 
-    const tabs = await screen.findAllByRole('tab')
-
-    const rdiTab = tabs.find((tab) =>
-      tab.getAttribute('id')?.endsWith('trigger-rdi-instances'),
-    )
-
-    expect(rdiTab).toHaveAttribute('data-state', 'active')
+    expect(screen.queryByText('Redis Data Integration')).not.toBeInTheDocument()
   })
 
-  it('should call proper history push', () => {
+  it('should not navigate to rdi when rdi tab is hidden', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
     reactRouterDom.useLocation = jest
@@ -81,12 +75,12 @@ describe('HomeTabs', () => {
 
     render(<HomeTabs />)
 
-    fireEvent.mouseDown(screen.getByText('Redis Data Integration'))
+    expect(screen.queryByText('Redis Data Integration')).not.toBeInTheDocument()
 
-    expect(pushMock).toHaveBeenCalledWith(Pages.rdi)
+    expect(pushMock).not.toHaveBeenCalledWith(Pages.rdi)
   })
 
-  it('should send proper telemetry', () => {
+  it('should not send rdi telemetry when rdi tab is hidden', () => {
     const sendEventTelemetryMock = jest.fn()
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
@@ -97,14 +91,16 @@ describe('HomeTabs', () => {
 
     render(<HomeTabs />)
 
-    fireEvent.mouseDown(screen.getByText('Redis Data Integration'))
+    expect(screen.queryByText('Redis Data Integration')).not.toBeInTheDocument()
 
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSTANCES_TAB_CHANGED,
-      eventData: {
-        tab: 'Redis Data Integration',
-      },
-    })
+    expect(sendEventTelemetry).not.toBeCalledWith(
+      expect.objectContaining({
+        event: TelemetryEvent.INSTANCES_TAB_CHANGED,
+        eventData: expect.objectContaining({
+          tab: 'Redis Data Integration',
+        }),
+      }),
+    )
   })
 
   it('should not render rdi tab', () => {

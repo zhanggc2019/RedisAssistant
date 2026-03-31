@@ -1,22 +1,39 @@
 import React, { useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { getConfig } from 'uiSrc/config'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import Tabs from 'uiSrc/components/base/layout/tabs'
 import { tabs } from './constants'
 
+const riConfig = getConfig()
+type FeatureFlagsState = Record<string, { flag?: boolean } | undefined>
+
+/**
+ * 根据功能开关与本地定制开关过滤 Home 顶部标签。
+ */
+const getFilteredTabs = (
+  featureFlags: FeatureFlagsState | undefined,
+  hideOptionalNavigation: boolean,
+) =>
+  tabs.filter((tab) => {
+    if (hideOptionalNavigation && tab.value === 'rdi-instances') {
+      return false
+    }
+
+    return !tab.featureFlag || featureFlags?.[tab.featureFlag]?.flag
+  })
+
 const HomeTabs = () => {
   const history = useHistory()
   const { pathname } = useLocation()
   const featureFlags = useSelector(appFeatureFlagsFeaturesSelector)
+  const { hideOptionalNavigation } = riConfig.app
 
   const filteredTabs = useMemo(
-    () =>
-      tabs.filter(
-        (tab) => !tab.featureFlag || featureFlags?.[tab.featureFlag]?.flag,
-      ),
-    [featureFlags],
+    () => getFilteredTabs(featureFlags, hideOptionalNavigation),
+    [featureFlags, hideOptionalNavigation],
   )
 
   const activeTab =

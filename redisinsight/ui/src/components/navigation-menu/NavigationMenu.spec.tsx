@@ -161,16 +161,16 @@ describe('NavigationMenu', () => {
       expect(screen.getByTestId('settings-page-btn')).toBeTruthy()
     })
 
-    it('should render cloud link', () => {
+    it('should hide cloud link by default', () => {
       const { container } = render(<NavigationMenu />)
 
       const createCloudItem = container.querySelector(
         '[data-testid="create-cloud-sidebar-item"]',
       )
-      expect(createCloudItem).toBeTruthy()
+      expect(createCloudItem).toBeNull()
     })
 
-    it('should render github btn with proper link', () => {
+    it('should hide github btn by default', () => {
       ;(appInfoSelector as jest.Mock).mockImplementation(() => ({
         ...mockAppInfoSelector,
         server: {
@@ -179,14 +179,13 @@ describe('NavigationMenu', () => {
       }))
       render(<NavigationMenu />)
 
-      const githubBtn = screen.getByTestId('github-repo-btn')
-      expect(githubBtn).toBeTruthy()
-      expect(githubBtn?.getAttribute('href')).toEqual(EXTERNAL_LINKS.githubRepo)
+      const githubBtn = screen.queryByTestId('github-repo-btn')
+      expect(githubBtn).not.toBeInTheDocument()
     })
   })
 
   describe('feature flags tests', () => {
-    it('should show feature dependent items when feature flag is on', async () => {
+    it('should keep optional navigation items hidden when feature flag is on', async () => {
       const initialStoreState = set(
         cloneDeep(initialStateDefault),
         `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
@@ -198,12 +197,12 @@ describe('NavigationMenu', () => {
       })
       fireEvent.click(screen.getByTestId('help-menu-button'))
 
-      expect(screen.queryByTestId('notification-menu')).toBeInTheDocument()
+      expect(screen.queryByTestId('notification-menu')).not.toBeInTheDocument()
       expect(screen.queryByTestId('help-center')).toBeInTheDocument()
       expect(
         screen.queryByTestId('github-repo-divider-default'),
-      ).toBeInTheDocument()
-      expect(screen.queryByTestId('github-repo-icon')).toBeInTheDocument()
+      ).not.toBeInTheDocument()
+      expect(screen.queryByTestId('github-repo-icon')).not.toBeInTheDocument()
     })
 
     it('should hide feature dependent items when feature flag is off', async () => {

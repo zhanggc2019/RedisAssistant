@@ -3,6 +3,7 @@ import React from 'react'
 
 import { FeatureFlags } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { getConfig } from 'uiSrc/config'
 
 import { FeatureFlagComponent } from 'uiSrc/components'
 
@@ -25,8 +26,17 @@ import { useNavigation } from './hooks/useNavigation'
 import HighlightedFeature from '../hightlighted-feature/HighlightedFeature'
 import styles from './styles.module.scss'
 
+const riConfig = getConfig()
+
+/**
+ * 判断是否渲染可选导航入口（云、通知、GitHub）。
+ */
+const shouldShowOptionalNavigationItems = () =>
+  !riConfig.app.hideOptionalNavigation
+
 const NavigationMenu = () => {
   const { isRdiWorkspace, publicRoutes, highlightedPages } = useNavigation()
+  const showOptionalNavigationItems = shouldShowOptionalNavigationItems()
 
   const renderPublicNavItem = (nav: INavigations) => {
     const fragment = (
@@ -75,38 +85,48 @@ const NavigationMenu = () => {
         <RedisLogo isRdiWorkspace={isRdiWorkspace} />
       </SideBarContainer>
       <SideBarFooter className={styles.footer}>
-        <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
-          <CreateCloud />
-          <NotificationMenu />
-        </FeatureFlagComponent>
+        {showOptionalNavigationItems && (
+          <FeatureFlagComponent
+            name={FeatureFlags.envDependent}
+            enabledByDefault
+          >
+            <CreateCloud />
+            <NotificationMenu />
+          </FeatureFlagComponent>
+        )}
         <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
           <HelpMenu />
         </FeatureFlagComponent>
 
         {publicRoutes.map(renderPublicNavItem)}
 
-        <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
-          <SideBarDivider data-testid="github-repo-divider-default" />
-          <SideBarFooter.Link
-            data-testid="github-repo-btn"
-            href={EXTERNAL_LINKS.githubRepo}
-            target="_blank"
+        {showOptionalNavigationItems && (
+          <FeatureFlagComponent
+            name={FeatureFlags.envDependent}
+            enabledByDefault
           >
-            <SideBarItem
-              className={styles.githubNavItem}
-              tooltipProps={{
-                text: 'Star us on GitHub',
-                placement: 'right',
-              }}
+            <SideBarDivider data-testid="github-repo-divider-default" />
+            <SideBarFooter.Link
+              data-testid="github-repo-btn"
+              href={EXTERNAL_LINKS.githubRepo}
+              target="_blank"
             >
-              <SideBarItemIcon
-                icon={GithubIcon}
-                aria-label="github-repo-icon"
-                data-testid="github-repo-icon"
-              />
-            </SideBarItem>
-          </SideBarFooter.Link>
-        </FeatureFlagComponent>
+              <SideBarItem
+                className={styles.githubNavItem}
+                tooltipProps={{
+                  text: 'Star us on GitHub',
+                  placement: 'right',
+                }}
+              >
+                <SideBarItemIcon
+                  icon={GithubIcon}
+                  aria-label="github-repo-icon"
+                  data-testid="github-repo-icon"
+                />
+              </SideBarItem>
+            </SideBarFooter.Link>
+          </FeatureFlagComponent>
+        )}
       </SideBarFooter>
     </SideBar>
   )

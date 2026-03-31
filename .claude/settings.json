@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(yarn build:api)",
+      "Bash(yarn install:*)",
+      "Bash(yarn build:*)",
+      "Bash(yarn dev:desktop)",
+      "Bash(npx electron-rebuild:*)",
+      "Bash(yarn dev:electron:api)"
+    ]
+  }
+}

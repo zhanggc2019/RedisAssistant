@@ -77,6 +77,7 @@ export const defaultConfig = {
     truncatedStringPrefix:
       process.env.RI_CLIENTS_TRUNCATED_STRING_PREFIX ||
       '[Truncated due to length]',
+    hideOptionalNavigation: booleanEnv('RI_HIDE_OPTIONAL_NAV', true),
   },
   workbench: {
     pipelineCountDefault: intEnv('PIPELINE_COUNT_DEFAULT', 5),
