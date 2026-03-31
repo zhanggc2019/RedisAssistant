@@ -1,5 +1,6 @@
 import React, { ReactElement, useEffect } from 'react'
 import { Provider, useSelector } from 'react-redux'
+import { I18nextProvider } from 'react-i18next'
 
 import { Route, Switch } from 'react-router-dom'
 import { store } from 'uiSrc/slices/store'
@@ -26,6 +27,8 @@ import GlobalAzureAuth, {
   AzureAuthCallbackPage,
 } from './components/global-azure-auth'
 import NotFoundErrorPage from './pages/not-found-error/NotFoundErrorPage'
+import i18n from './i18n/config'
+import { initializeI18nState } from './slices/app/i18n'
 
 import themeDark from './styles/themes/dark_theme/darkTheme.scss?inline'
 import themeLight from './styles/themes/light_theme/lightTheme.scss?inline'
@@ -39,14 +42,23 @@ themeService.registerTheme(Theme.Light, themeLight)
 const AppWrapper = ({ children }: { children?: ReactElement[] }) => (
   <Provider store={store}>
     <ThemeProvider>
-      <AppInit>
-        <App>{children}</App>
-      </AppInit>
+      <I18nextProvider i18n={i18n}>
+        <AppInit>
+          <App>{children}</App>
+        </AppInit>
+      </I18nextProvider>
     </ThemeProvider>
   </Provider>
 )
+
 const App = ({ children }: { children?: ReactElement[] }) => {
   const { loading: serverLoading } = useSelector(appInfoSelector)
+  
+  useEffect(() => {
+    // Initialize i18n state from localStorage or browser language
+    store.dispatch(initializeI18nState())
+  }, [])
+  
   useEffect(() => {
     if (!serverLoading) {
       removePagePlaceholder()
