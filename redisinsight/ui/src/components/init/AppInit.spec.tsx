@@ -122,4 +122,33 @@ describe('App Init', () => {
     )
     expect(screen.getByText('children')).toBeInTheDocument()
   })
+
+  it('should retry initialize app automatically when status is "fail"', () => {
+    jest.useFakeTimers()
+    try {
+      ;(appInitSelector as jest.Mock).mockReturnValue({
+        ...initialState,
+        status: STATUS_FAIL,
+      })
+      const initializeAppActionMock = jest.fn()
+      ;(initializeAppAction as jest.Mock).mockImplementation(
+        () => initializeAppActionMock,
+      )
+
+      render(
+        <AppInit>
+          <div>children</div>
+        </AppInit>,
+        {
+          store: mockedStore,
+        },
+      )
+
+      jest.advanceTimersByTime(1_000)
+
+      expect(initializeAppAction).toHaveBeenCalledTimes(2)
+    } finally {
+      jest.useRealTimers()
+    }
+  })
 })
