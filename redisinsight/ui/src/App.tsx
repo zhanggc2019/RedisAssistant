@@ -53,12 +53,12 @@ const AppWrapper = ({ children }: { children?: ReactElement[] }) => (
 
 const App = ({ children }: { children?: ReactElement[] }) => {
   const { loading: serverLoading } = useSelector(appInfoSelector)
-  
+
   useEffect(() => {
     // Initialize i18n state from localStorage or browser language
     store.dispatch(initializeI18nState())
   }, [])
-  
+
   useEffect(() => {
     if (!serverLoading) {
       removePagePlaceholder()

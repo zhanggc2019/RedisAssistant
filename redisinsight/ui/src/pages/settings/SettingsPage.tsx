@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
+import { useTranslation } from 'react-i18next'
 
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -37,12 +38,16 @@ import {
   ThemeSettings,
   WorkbenchSettings,
 } from './components'
-import { DateTimeFormatter } from './components/general-settings'
+import {
+  DateTimeFormatter,
+  LanguageSettings,
+} from './components/general-settings'
 import styles from './styles.module.scss'
 
 const SettingsPage = () => {
   const [loading, setLoading] = useState(false)
   const { loading: settingsLoading } = useSelector(userSettingsSelector)
+  const { t } = useTranslation()
 
   const initialOpenSection = globalThis.location.hash || ''
 
@@ -61,11 +66,12 @@ const SettingsPage = () => {
   }, [])
 
   useDebouncedEffect(() => setLoading(settingsLoading), 100, [settingsLoading])
-  setTitle('Settings')
+  setTitle(t('settings.title'))
 
   const Appearance = () => (
     <>
       <ThemeSettings />
+      <LanguageSettings />
       <ConsentsNotifications />
       <Divider />
       <Spacer />
@@ -115,8 +121,7 @@ const SettingsPage = () => {
       )}
       <CallOut className={styles.warning}>
         <Text size="s" className={styles.smallText}>
-          Advanced settings should only be changed if you understand their
-          impact.
+          {t('settings.advanced.warning')}
         </Text>
       </CallOut>
       <AdvancedSettings />
@@ -128,7 +133,7 @@ const SettingsPage = () => {
       <PageBody component="div">
         <PageHeader>
           <Title size="XXL" className={styles.title}>
-            Settings
+            {t('settings.title')}
           </Title>
         </PageHeader>
 
@@ -137,7 +142,7 @@ const SettingsPage = () => {
             <RICollapsibleNavGroup
               isCollapsible
               className={styles.accordion}
-              title="General"
+              title={t('settings.sections.general')}
               initialIsOpen={initialOpenSection === '#general'}
               data-test-subj="accordion-appearance"
             >
@@ -146,7 +151,7 @@ const SettingsPage = () => {
             <RICollapsibleNavGroup
               isCollapsible
               className={styles.accordion}
-              title="Privacy"
+              title={t('settings.sections.privacy')}
               initialIsOpen={initialOpenSection === '#privacy'}
               data-test-subj="accordion-privacy-settings"
             >
@@ -155,7 +160,7 @@ const SettingsPage = () => {
             <RICollapsibleNavGroup
               isCollapsible
               className={styles.accordion}
-              title="Workbench"
+              title={t('settings.sections.workbench')}
               initialIsOpen={initialOpenSection === '#workbench'}
               data-test-subj="accordion-workbench-settings"
               data-testid="accordion-workbench-settings"
@@ -167,7 +172,7 @@ const SettingsPage = () => {
               <RICollapsibleNavGroup
                 isCollapsible
                 className={cx(styles.accordion, styles.accordionWithSubTitle)}
-                title="Redis Cloud"
+                title={t('settings.sections.cloud')}
                 initialIsOpen={initialOpenSection === '#cloud'}
                 data-test-subj="accordion-cloud-settings"
               >
@@ -177,7 +182,7 @@ const SettingsPage = () => {
             <RICollapsibleNavGroup
               isCollapsible
               className={cx(styles.accordion, styles.accordionWithSubTitle)}
-              title="Advanced"
+              title={t('settings.sections.advanced')}
               initialIsOpen={initialOpenSection === '#advanced'}
               data-test-subj="accordion-advanced-settings"
             >

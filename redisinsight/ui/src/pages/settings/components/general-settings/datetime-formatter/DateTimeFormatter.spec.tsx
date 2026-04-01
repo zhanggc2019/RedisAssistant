@@ -5,6 +5,12 @@ import { dateTimeOptions } from 'uiSrc/constants'
 import { Nullable } from 'uiSrc/utils'
 import DateTimeFormatter from './DateTimeFormatter'
 
+const PRESET_FORMAT_LABEL =
+  /Pre-selected formats|预设格式|settings\.general\.dateTime\.preset/
+const CUSTOM_FORMAT_LABEL = /Custom|自定义|settings\.general\.dateTime\.custom/
+const INVALID_FORMAT_PREVIEW =
+  /Invalid Format|无效格式|settings\.general\.dateTime\.invalidFormatShort/
+
 jest.mock('uiSrc/slices/user/user-settings', () => ({
   ...jest.requireActual('uiSrc/slices/user/user-settings'),
   userSettingsConfigSelector: jest.fn().mockReturnValue({
@@ -25,19 +31,19 @@ describe('DateTimeFormatter', () => {
 
   it('should not show custom btn and input unless custom radio btn is clicked ', async () => {
     const { container } = render(<DateTimeFormatter />)
-    expect(screen.getByText('Pre-selected formats')).toBeInTheDocument()
+    expect(screen.getByText(PRESET_FORMAT_LABEL)).toBeInTheDocument()
     expect(
       container.querySelector('[data-test-subj="select-datetime"]'),
     ).toBeTruthy()
     expect(screen.queryByTestId('datetime-custom-btn')).not.toBeInTheDocument()
-    fireEvent.click(screen.getByText('Custom'))
+    fireEvent.click(screen.getByText(CUSTOM_FORMAT_LABEL))
     expect(screen.queryByTestId('datetime-custom-btn')).toBeInTheDocument()
   })
 
   it('should display invalid format when wrong format is typed in a custom input', async () => {
     const { getByDisplayValue } = render(<DateTimeFormatter />)
 
-    await act(() => fireEvent.click(screen.getByText('Custom')))
+    await act(() => fireEvent.click(screen.getByText(CUSTOM_FORMAT_LABEL)))
     const customInput: Nullable<HTMLElement> = screen.getByTestId(
       'custom-datetime-input',
     )
@@ -46,13 +52,15 @@ describe('DateTimeFormatter', () => {
       fireEvent.change(customInput, { target: { value: 'fffffinvalid' } }),
     )
 
-    expect(getByDisplayValue('Invalid Format')).toBeInTheDocument()
+    expect(getByDisplayValue(INVALID_FORMAT_PREVIEW)).toBeInTheDocument()
   })
 
   it('should call proper telemetry events', async () => {
     render(<DateTimeFormatter />)
 
-    await act(async () => fireEvent.click(screen.getByText('Custom')))
+    await act(async () =>
+      fireEvent.click(screen.getByText(CUSTOM_FORMAT_LABEL)),
+    )
     const customInput: Nullable<HTMLElement> = screen.getByTestId(
       'custom-datetime-input',
     )

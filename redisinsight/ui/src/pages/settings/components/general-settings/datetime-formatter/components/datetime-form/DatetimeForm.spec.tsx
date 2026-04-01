@@ -7,6 +7,11 @@ import { Nullable } from 'uiSrc/utils'
 import DatetimeForm, { Props } from './DatetimeForm'
 
 const mockedProps = mock<Props>()
+const PRESET_FORMAT_LABEL =
+  /Pre-selected formats|预设格式|settings\.general\.dateTime\.preset/
+const CUSTOM_FORMAT_LABEL = /Custom|自定义|settings\.general\.dateTime\.custom/
+const INVALID_FORMAT_PREVIEW =
+  /Invalid Format|无效格式|settings\.general\.dateTime\.invalidFormatShort/
 
 jest.mock('uiSrc/slices/user/user-settings', () => ({
   ...jest.requireActual('uiSrc/slices/user/user-settings'),
@@ -28,12 +33,12 @@ describe('DatetimeForm', () => {
 
   it('should not show custom btn and input unless custom radio btn is clicked ', async () => {
     const { container } = render(<DatetimeForm {...instance(mockedProps)} />)
-    expect(screen.getByText('Pre-selected formats')).toBeTruthy()
+    expect(screen.getByText(PRESET_FORMAT_LABEL)).toBeTruthy()
     expect(
       container.querySelector('[data-test-subj="select-datetime"]'),
     ).toBeTruthy()
     expect(screen.queryByTestId('datetime-custom-btn')).toBeFalsy()
-    await act(() => fireEvent.click(screen.getByText('Custom')))
+    await act(() => fireEvent.click(screen.getByText(CUSTOM_FORMAT_LABEL)))
     expect(screen.queryByTestId('datetime-custom-btn')).toBeTruthy()
   })
 
@@ -46,7 +51,7 @@ describe('DatetimeForm', () => {
       />,
     )
 
-    await act(() => fireEvent.click(screen.getByText('Custom')))
+    await act(() => fireEvent.click(screen.getByText(CUSTOM_FORMAT_LABEL)))
     const customInput: Nullable<HTMLElement> = screen.getByTestId(
       'custom-datetime-input',
     )
@@ -55,7 +60,9 @@ describe('DatetimeForm', () => {
       fireEvent.change(customInput, { target: { value: 'fffffinvalid' } }),
     )
 
-    expect(onFormatChange).toBeCalledWith('Invalid Format')
+    expect(onFormatChange).toBeCalledWith(
+      expect.stringMatching(INVALID_FORMAT_PREVIEW),
+    )
   })
 
   it('should call proper telemetry events when custom format is saved', async () => {
@@ -64,7 +71,7 @@ describe('DatetimeForm', () => {
 
     render(<DatetimeForm {...instance(mockedProps)} />)
 
-    await act(() => fireEvent.click(screen.getByText('Custom')))
+    await act(() => fireEvent.click(screen.getByText(CUSTOM_FORMAT_LABEL)))
     const customInput: Nullable<HTMLElement> = screen.getByTestId(
       'custom-datetime-input',
     )
@@ -90,8 +97,8 @@ describe('DatetimeForm', () => {
 
     render(<DatetimeForm {...instance(mockedProps)} />)
 
-    await act(() => fireEvent.click(screen.getByText('Custom')))
-    await act(() => fireEvent.click(screen.getByText('Pre-selected formats')))
+    await act(() => fireEvent.click(screen.getByText(CUSTOM_FORMAT_LABEL)))
+    await act(() => fireEvent.click(screen.getByText(PRESET_FORMAT_LABEL)))
 
     expect(sendEventTelemetry).toHaveBeenCalledWith({
       event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,

@@ -55,5 +55,42 @@
     "select": "选择语言",
     "english": "English",
     "chinese": "中文"
+  },
+  "settings": {
+    "title": "设置",
+    "sections": {
+      "general": "通用",
+      "privacy": "隐私",
+      "workbench": "工作台",
+      "cloud": "Redis Cloud",
+      "advanced": "高级"
+    },
+    "advanced": {
+      "warning": "仅当您了解影响时再修改高级设置。"
+    },
+    "general": {
+      "colorTheme": {
+        "title": "颜色主题",
+        "description": "指定 Redis Insight 使用的颜色主题："
+      },
+      "language": {
+        "title": "语言",
+        "description": "指定 Redis Insight 使用的显示语言：",
+        "english": "English",
+        "chinese": "中文"
+      },
+      "dateTime": {
+        "title": "日期和时间格式",
+        "description": "指定 Redis Insight 使用的日期与时间格式：",
+        "timezoneDescription": "指定 Redis Insight 使用的时区：",
+        "preview": "预览：",
+        "preset": "预设格式",
+        "custom": "自定义",
+        "save": "保存",
+        "invalidFormat": "该格式不受支持。",
+        "invalidFormatShort": "无效格式",
+        "formatTooLong": "格式长度不能超过 50 个字符"
+      }
+    }
   }
 }

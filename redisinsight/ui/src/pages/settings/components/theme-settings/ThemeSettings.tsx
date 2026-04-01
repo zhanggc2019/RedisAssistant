@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
@@ -17,6 +18,7 @@ import { Title } from 'uiSrc/components/base/text'
 
 const ThemeSettings = () => {
   const dispatch = useDispatch()
+  const { t } = useTranslation()
   const [selectedTheme, setSelectedTheme] = useState<string>(DEFAULT_THEME)
   const options = THEMES
   const themeContext = useContext(ThemeContext)
@@ -50,9 +52,9 @@ const ThemeSettings = () => {
 
   return (
     <form>
-      <Title size="XS">Color Theme</Title>
+      <Title size="XS">{t('settings.general.colorTheme.title')}</Title>
       <Spacer size="m" />
-      <FormField label="Specifies the color theme to be used in Redis Insight:">
+      <FormField label={t('settings.general.colorTheme.description')}>
         <RiSelect
           valueRender={defaultValueRender}
           options={options}

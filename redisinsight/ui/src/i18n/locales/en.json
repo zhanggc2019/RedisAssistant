@@ -55,5 +55,42 @@
     "select": "Select Language",
     "english": "English",
     "chinese": "中文"
+  },
+  "settings": {
+    "title": "Settings",
+    "sections": {
+      "general": "General",
+      "privacy": "Privacy",
+      "workbench": "Workbench",
+      "cloud": "Redis Cloud",
+      "advanced": "Advanced"
+    },
+    "advanced": {
+      "warning": "Advanced settings should only be changed if you understand their impact."
+    },
+    "general": {
+      "colorTheme": {
+        "title": "Color Theme",
+        "description": "Specifies the color theme to be used in Redis Insight:"
+      },
+      "language": {
+        "title": "Language",
+        "description": "Specifies the display language to be used in Redis Insight:",
+        "english": "English",
+        "chinese": "中文"
+      },
+      "dateTime": {
+        "title": "Date and Time Format",
+        "description": "Specifies the date and time format to be used in Redis Insight:",
+        "timezoneDescription": "Specifies the time zone to be used in Redis Insight:",
+        "preview": "Preview:",
+        "preset": "Pre-selected formats",
+        "custom": "Custom",
+        "save": "Save",
+        "invalidFormat": "This format is not supported.",
+        "invalidFormatShort": "Invalid Format",
+        "formatTooLong": "Format should not exceed 50 characters"
+      }
+    }
   }
 }

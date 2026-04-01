@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
 import { checkDateTimeFormat, formatTimestamp } from 'uiSrc/utils'
@@ -36,6 +37,7 @@ export interface Props {
 }
 
 const DatetimeForm = ({ onFormatChange }: Props) => {
+  const { t } = useTranslation()
   const [error, setError] = useState('')
   const [saveFormatSucceed, setSaveFormatSucceed] = useState(false)
   const config = useSelector(userSettingsConfigSelector)
@@ -86,7 +88,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
         ),
       )
     } else {
-      setError('This format is not supported.')
+      setError(t('settings.general.dateTime.invalidFormat'))
       formik.setSubmitting(false)
     }
   }
@@ -102,10 +104,10 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
   const handleFormatCheck = (format = formik.values.format) => {
     const { valid, error: errorMsg } = checkDateTimeFormat(format)
     if (format.length > 50) {
-      setError('Format should not exceed 50 characters')
+      setError(t('settings.general.dateTime.formatTooLong'))
     } else if (!valid) {
-      setError(errorMsg || 'This format is not supported')
-      onFormatChange?.('Invalid Format')
+      setError(errorMsg || t('settings.general.dateTime.invalidFormat'))
+      onFormatChange?.(t('settings.general.dateTime.invalidFormatShort'))
     } else {
       setError('')
       const newPreview = formatTimestamp(
@@ -167,11 +169,11 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
   const dateTimeFormatOptions = [
     {
       value: DatetimeRadioOption.Common,
-      label: 'Pre-selected formats',
+      label: t('settings.general.dateTime.preset'),
     },
     {
       value: DatetimeRadioOption.Custom,
-      label: 'Custom',
+      label: t('settings.general.dateTime.custom'),
     },
   ]
 
@@ -218,18 +220,20 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
               position="top"
               anchorClassName="euiToolTip__btn-disabled"
               content={
-                showError ? error || 'This format is not supported' : null
+                showError
+                  ? error || t('settings.general.dateTime.invalidFormat')
+                  : null
               }
             >
               <PrimaryButton
-                aria-label="Save"
+                aria-label={t('settings.general.dateTime.save')}
                 loading={formik.isSubmitting}
                 onClick={onCustomFormatSubmit}
                 data-testid="datetime-custom-btn"
                 icon={getBtnIconType()}
                 disabled={showError}
               >
-                Save
+                {t('settings.general.dateTime.save')}
               </PrimaryButton>
             </RiTooltip>
           </>
